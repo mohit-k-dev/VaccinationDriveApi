@@ -5,16 +5,19 @@ require('../db');
  * List citizen.
  * 
  * Show citizen list, and use search, filter and paginations.
- *  *
+ * 
+ * Filter params
  * @param {number} hospitalCode optional
  * @param {number} vaccineCode optional
  * @param {string} gender optional
  * @param {string} dateRange optional
  * @param {string} search optional
  * 
+ * Pagination params
  * @param {string} page optional
  * @param {string} limit optional
  * 
+ * Sorting params
  * @param {string} sort optional
  * 
  * @return {Array} citizens list
@@ -177,8 +180,7 @@ module.exports.citizens = async (req, res) => {
                     }
                 },
                 vaccineCode: '$vaccine.code',
-                vaccineName: '$vaccine.name',
-                date:1
+                vaccineName: '$vaccine.name'
             } 
         },
         { $unwind: "$hospitalName" },
