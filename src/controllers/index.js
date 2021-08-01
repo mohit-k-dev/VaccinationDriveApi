@@ -19,7 +19,7 @@ require('../db');
  * 
  * @return {Array} citizens list
  */
-module.exports.index = async (req, res) => {
+module.exports.citizens = async (req, res) => {
 
     // Filters
     let match = {};
@@ -177,7 +177,8 @@ module.exports.index = async (req, res) => {
                     }
                 },
                 vaccineCode: '$vaccine.code',
-                vaccineName: '$vaccine.name'
+                vaccineName: '$vaccine.name',
+                date:1
             } 
         },
         { $unwind: "$hospitalName" },
@@ -211,3 +212,7 @@ module.exports.index = async (req, res) => {
         perPageLimit: limit
     });
 };
+
+module.exports.greet = async (req, res) => {
+    res.send({'message': 'Welcome to vaccination drive'});
+}

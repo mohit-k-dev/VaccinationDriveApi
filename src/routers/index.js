@@ -1,5 +1,6 @@
 const Router = require("express").Router();
-const { index } = require("../controllers/citizen");
-Router.get("/citizens", index);
+const { citizens, greet } = require("../controllers");
+Router.get("/citizens", citizens);
+Router.get("/", greet);
 
 module.exports = Router;
