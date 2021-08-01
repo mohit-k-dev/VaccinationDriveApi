@@ -6,5 +6,6 @@ yarn install
 Start server:
 npm start
 
-Api url:
-http://localhost:3000/
+Api end points:
+- Home: http://localhost:3000/
+- Citizens list: http://localhost:3000/citizens
