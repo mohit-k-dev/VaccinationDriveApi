@@ -76,9 +76,9 @@ module.exports.index = async (req, res) => {
         let dateRangeStart = dateRangeArr[0].trim();
         let dateRangeEnd = dateRangeArr[1].trim();
         
-        match["firstVaccine.date"] = {
-            "$gte": ISODate(dateRangeStart+"T00:00:00.000Z"),
-            "$lte": ISODate(dateRangeEnd+"T00:00:00.000Z")
+        match["date"] = {
+            "$gte": new Date(dateRangeStart+"T00:00:00.000Z"),
+            "$lte": new Date(dateRangeEnd+"T00:00:00.000Z")
         };        
     }
 
@@ -93,7 +93,7 @@ module.exports.index = async (req, res) => {
     }
 
     // Pagination
-    let limit = 10;
+    let limit = 20;
     if (req.query.limit) {
         limit = parseInt(req.query.limit);
     }
@@ -113,6 +113,26 @@ module.exports.index = async (req, res) => {
     let pipeline = [
         { $addFields: { "firstVaccine": { $first: "$vaccinations" } } },
         { $addFields: { "fullName": { $concat: [ "$firstName", " ", "$lastName" ] } } },
+        {
+            $addFields: {
+                "date": {   // Vaccine date
+                    "$dateFromString": {
+                        "dateString": {
+                            $let:{
+                                vars:{parts:{$split:["$firstVaccine.date"," "]}},
+                                in:{$concat:[
+                                    {$arrayElemAt:["$$parts",2]},'-',
+                                    {$arrayElemAt:["$$parts",1]} ,'-',
+                                    {$arrayElemAt:["$$parts",3]}
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+
         {
             $lookup: { 
                 from: "hospital",
@@ -176,14 +196,18 @@ module.exports.index = async (req, res) => {
         sort = {
             "$sort" : sort
         };
-
-        pipeline.unshift(sort);
+        if (sortField == 'date') {
+            pipeline.push(sort);
+        } else {
+            pipeline.unshift(sort);
+        }
     }
 
     const citizens = await Citizen.aggregate(pipeline).allowDiskUse(true);
 
     res.send({
-        page,
-        citizens
+        citizens,
+        pageNumber: page,
+        perPageLimit: limit
     });
 };
