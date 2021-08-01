@@ -1,9 +1,9 @@
 # VaccinationDriveApi
 
-Install 
+Install: 
 yarn install
 
-Start server
+Start server:
 npm start
 
 Api url:
